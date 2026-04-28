@@ -1,6 +1,7 @@
 //-----------------------------------------------------------------------------------------------------
 // 1 задание
 import 'dart:io';
+import 'dart:math';
 class Krujka{
   void pit(){
     print("пьет");
@@ -142,6 +143,19 @@ class Garag<Anton, Olen, Vilka, Karaci> {
   void veshi() => print("В гараже антон, олень, вилка и караси");
 }
 //-----------------------------------------------------------------------------------------------------
+// 6 задание
+class Overload {
+  final num value;
+  Overload(this.value);
+  Overload operator +(Overload other) => Overload(value + other.value);
+  Overload operator -(Overload other) => Overload(value - other.value);
+  Overload operator *(Overload other) => Overload(value * other.value);
+  Overload operator /(Overload other) => Overload(value / other.value);
+  
+  @override
+  String toString() => '$value';
+}
+//-----------------------------------------------------------------------------------------------------
 // 8 задание
 class Geom{
   int ploshad;
@@ -165,23 +179,180 @@ class Pryamoug extends Geom{
 }
 //-----------------------------------------------------------------------------------------------------
 // 9 задание
-class NumberConverter {
+class Convent {
   void start() {
     print("Введите число, которое будет конвертироваться: ");
     int number = int.parse(stdin.readLineSync()!);
-    print("Выберите в какую систему счисления конверитровать: ");
+    print("Выберите в какую систему счисления конвертировать:");
+    print("1 - Десятичная (10)"); 
+    print("2 - Шестнадцатеричная (16)");
+    print("3 - Восьмеричная (8)");
     int choice = int.parse(stdin.readLineSync()!);
-    String result=convert(number, choice);
-    print(result);
+    int t;
+    if (choice == 1) t = 10;
+    else if (choice == 2) t = 16;
+    else if (choice == 3) t = 8;
+    else {
+      print("Ошибка: надо выбрать 1, 2 или 3");
+      return;
+    }
+    String result = convert(number, t);
+    print("Результат: $number в ${t}-чной системе = $result");
   }
-
-  String convert(int number, int choice) {
-    if (choice == 10) return number.toRadixString(10);
-    if (choice == 16) return number.toRadixString(16);
-    if (choice == 8) return number.toRadixString(8);
-    return "Надо 10 или 16 или 8";
+  String convert(int number, int t) {
+    if (t == 10) return number.toRadixString(10);
+    if (t == 16) return number.toRadixString(16);
+    if (t == 8) return number.toRadixString(8);
+    return "надо 8, 10 или 16";
   } 
 }
+//-----------------------------------------------------------------------------------------------------
+// 10 задание
+abstract class GeometricShape {
+  double area();
+}
+
+class ShapeCollection {
+  List<GeometricShape> shapes = [];
+
+  void add(GeometricShape shape) {
+    shapes.add(shape);
+  }
+
+  GeometricShape? findMaxArea() {
+    if (shapes.isEmpty) {
+      return null;
+    }
+
+    GeometricShape maxShape = shapes[0];
+    double maxAreaValue = maxShape.area();
+
+    for (int i = 1; i < shapes.length; i++) {
+      double currentAreaValue = shapes[i].area();
+      if (currentAreaValue > maxAreaValue) {
+        maxAreaValue = currentAreaValue;
+        maxShape = shapes[i];
+      }
+    }
+    return maxShape;
+  }
+}
+
+class Triangle extends GeometricShape {
+  double baseLength;
+  double heightLength;
+
+  Triangle(this.baseLength, this.heightLength);
+
+  @override
+  double area() {
+    return 0.5 * baseLength * heightLength;
+  }
+
+  @override
+  String toString() {
+    return 'Треугольник (основание $baseLength, высота $heightLength)';
+  }
+}
+
+class Rectangle extends GeometricShape {
+  double widthValue;
+  double heightValue;
+
+  Rectangle(this.widthValue, this.heightValue);
+
+  @override
+  double area() {
+    return widthValue * heightValue;
+  }
+
+  @override
+  String toString() {
+    return 'Прямоугольник ($widthValue × $heightValue)';
+  }
+}
+
+class Rhombus extends GeometricShape {
+  double diagonal1;
+  double diagonal2;
+
+  Rhombus(this.diagonal1, this.diagonal2);
+
+  @override
+  double area() {
+    return (diagonal1 * diagonal2) / 2;
+  }
+
+  @override
+  String toString() {
+    return 'Ромб (диагональ1 = $diagonal1, диагональ2 = $diagonal2)';
+  }
+}
+//-----------------------------------------------------------------------------------------------------
+// 11 задание
+abstract class StolovyPribor {
+  String getName();
+}
+
+class Lozhka extends StolovyPribor {
+  @override
+  String getName() {
+    return 'Ложка';
+  }
+}
+
+class Vilka extends StolovyPribor {
+  @override
+  String getName() {
+    return 'Вилка';
+  }
+}
+
+class Nozh extends StolovyPribor {
+  @override
+  String getName() {
+    return 'Нож';
+  }
+}
+
+class Stol {
+  List<StolovyPribor> pribori = [];
+  
+  void polozhit(StolovyPribor pribor) {
+    pribori.add(pribor);
+    print('${pribor.getName()} положен(а) на стол');
+  }
+  
+  void vziat(StolovyPribor pribor) {
+    if (pribori.contains(pribor)) {
+      pribori.remove(pribor);
+      print('${pribor.getName()} взят(а) со стола');
+    } else {
+      print('Ошибка: ${pribor.getName()} нет на столе');
+    }
+  }
+  
+  void vziatPosledniy() {
+    if (pribori.isNotEmpty) {
+      StolovyPribor pribor = pribori.removeLast();
+      print('${pribor.getName()} взят(а) со стола');
+    } else {
+      print('На столе ничего нет');
+    }
+  }
+  
+  void pokazatStol() {
+    print('сейчас на столе');
+    if (pribori.isEmpty) {
+      print('Стол пуст');
+    } else {
+      for (int i = 0; i < pribori.length; i++) {
+        print('${i + 1}. ${pribori[i].getName()}');
+      }
+    }
+  }
+}
+
 //-----------------------------------------------------------------------------------------------------
 // 7 задание
 enum MotionState {
@@ -236,14 +407,13 @@ class Car {
   }
 }
 
-//-----------------------------------------------------------------------------------------------------
 void main(){
   Chel c = Chel("Антон");
   print("1 ЗАДАНИЕ ----------------------------------------------------------------------------");
   c.pit();
   
 //----------------------------------------------------------------------------------------------------
-print("2 ЗАДАНИЕ ----------------------------------------------------------------------------");
+  print("2 ЗАДАНИЕ ----------------------------------------------------------------------------");
   User u = User("Майку","Носки","Антона");
   print("Выберите что хотите сделать со шкафом:");
   print("1.взять всё");
@@ -280,11 +450,11 @@ print("2 ЗАДАНИЕ --------------------------------------------------------
     } else {
       print('2. Направо (уже 3 блина, нельзя)');
     }
-    print('0. Выход');
+    print('3. Выход');
 
     String input = stdin.readLineSync()!;
     int choice = int.parse(input); 
-    if (choice == 0) {
+    if (choice == 3) {
       print('Программа завершена.');
       break;
     }
@@ -317,10 +487,10 @@ print("2 ЗАДАНИЕ --------------------------------------------------------
     print('1. Стоп (остановить)');
     print('2. Ехать (начать движение)');
     print('3. Повернуть');
-    print('0. Выход');
+    print('4. Выход');
     String input = stdin.readLineSync()!;
     int choice = int.parse(input); 
-    if (choice == 0) {
+    if (choice == 4) {
       print('Программа завершена.');
       break;
     }
@@ -346,5 +516,86 @@ print("2 ЗАДАНИЕ --------------------------------------------------------
   print(ww.vilka); 
   print(ww.karaci);  
   ww.veshi();
+  print("6 ЗАДАНИЕ ----------------------------------------------------------------------------");
+  Overload a = Overload(42);
+  Overload b = Overload(2);
+  print('$a + $b = ${a + b}');
+  print('$a - $b = ${a - b}');
+  print('$a * $b = ${a * b}');
+  print('$a / $b = ${a / b}');
+  print("9 ЗАДАНИЕ ----------------------------------------------------------------------------");
+  Convent converter = Convent();
+  converter.start();
+  print("10 ЗАДАНИЕ ----------------------------------------------------------------------------");
+  ShapeCollection y = ShapeCollection();
+
+  Rectangle myRectangle = Rectangle(5, 8);
+  Triangle myTriangle = Triangle(6, 4);
+  Rhombus myRhombus = Rhombus(6, 8);
+
+  y.add(myRectangle);
+  y.add(myTriangle);
+  y.add(myRhombus);
+
+  GeometricShape? maxShape = y.findMaxArea();
+
+  if (maxShape != null) {
+    print('Фигура с максимальной площадью: $maxShape');
+    print('Её площадь: ${maxShape.area()}');
+  } else {
+    print('Нет фигур в списке');
+  }
+
+  print('\nВсе фигуры:');
+  for (var shape in y.shapes) {
+    print('$shape → площадь = ${shape.area()}');
+  }
+  print("11 ЗАДАНИЕ ----------------------------------------------------------------------------");
+  Stol stol = Stol();
+  Lozhka lozhka = Lozhka();
+  Vilka vilka = Vilka();
+  Nozh nozh = Nozh();
   
+  while (true) {
+    stol.pokazatStol();
+    
+    print('Выберите действие:');
+    print('1. Положить ложку');
+    print('2. Положить вилку');
+    print('3. Положить нож');
+    print('4. Взять последний прибор');
+    print('5. Выход');
+    
+    String? input = stdin.readLineSync();
+    int choice = int.tryParse(input ?? '') ?? -1;
+    
+    
+    
+    
+    switch (choice) {
+      case 1:
+        stol.polozhit(lozhka);
+        break;
+        
+      case 2:
+        stol.polozhit(vilka);
+        break;
+        
+      case 3:
+        stol.polozhit(nozh);
+        break;
+        
+      case 4:
+        stol.vziatPosledniy();
+        break;
+      case 5:
+    }
+    if (choice == 5) {
+      print('Программа завершена.');
+      break;
+    }
+  }
 }
+
+
+
